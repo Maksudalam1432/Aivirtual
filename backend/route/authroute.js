@@ -1,5 +1,5 @@
 import express from "express"
-import { singup ,login ,logout } from "../config/Controller/Auth.cont.js"
+import { singup ,login ,logout } from "../Controller/Auth.cont.js"
 
  const AuthRoute=express.Router()
 

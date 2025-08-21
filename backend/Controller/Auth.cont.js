@@ -1,75 +1,82 @@
-import Users from "../../model/data.model.js"
-import gentoken  from "../token.js"
-import cookieParser from "cookie-parser"
-import bcrypt, { hash } from "bcrypt"
+import Users  from "../model/data.model.js";
+import gentoken from "../config/token.js";
+import bcrypt from "bcrypt";
 
 
-export const  singup= async (req,res)=>{
-    try{
 
-     const {name,email ,password}=req.body;
+// ---------------- Signup ----------------
+export const singup = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-     const exitemail= await Users.findOne({email});
-     if(exitemail){
-      return   res.status(400 ).json({message:"email already exits !"})
-     }
-     if(password.length<6){
-         return   res.status(400 ).json({message:"password must be at 6 characters !"})
-     }
-         const hashpassword=await bcrypt.hash(password,10)
-          const user=await Users.create({
-            name,password:hash,email
-          })
-
-          const token=await gentoken(user._id)
-          req.cookie("token",token,{
-  httponly:true,
-  maxAge:true,
-  sameSite:2*24*60*60*1000,
-  secure:false
-          })
-
-          req.status(200).json(user)
-    }catch (error){
-   return res.status(201).json({message:`singup error ${error}`})
-    }
-}
-
-export const login= async (req,res)=>{
-    try{
-
-     const {email ,password}=req.body;
-
-     const exitemail= await Users.findOne({email});
-     if(!exitemail){
-      return   res.status(400 ).json({message:"email does not exits !"})
-     }
-     const ismatch=await bcrypt.compare(password, exitemail.password)
-     if(!ismatch){
-        return   res.status(400 ).json({message:"incorrect password"})
-     }
-          const token=await gentoken(user._id)
-          req.cookie("token",token,{
-  httponly:true,
-  maxAge:true,
-  sameSite:2*24*60*60*1000,
-  secure:false
-          })
-
-          req.status(201).json(user)
-    }catch (error){
-   return res.status(201).json({message:`login error ${error}`})
-    }
-}
-
-
-export const  logout=async (req,res)=>{
-    try {
-    res.clearCokkie("token")
-        return res.status(200).json({message:"Logout succesfully"})
-
-    } catch (error){
-         res.status(201).json({message:`logout error ${error}`})
+    const exitemail = await Users.findOne({ email });
+    if (exitemail) {
+      return res.status(400).json({ message: "Email already exists!" });
     }
 
- }
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters!" });
+    }
+
+    const hashpassword = await bcrypt.hash(password, 10);
+
+    const user = await Users.create({
+      name,
+      email,
+      password: hashpassword,
+    });
+
+    const token = await gentoken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+      sameSite: "strict",
+      secure: false,
+    });
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: `Signup error: ${error}` });
+  }
+};
+
+// ---------------- Login ----------------
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const exitemail = await Users.findOne({ email });
+    if (!exitemail) {
+      return res.status(400).json({ message: "Email does not exist!" });
+    }
+
+    const ismatch = await bcrypt.compare(password, exitemail.password);
+    if (!ismatch) {
+      return res.status(400).json({ message: "Incorrect password" });
+    }
+
+    const token = await gentoken(exitemail._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+      sameSite: "strict",
+      secure: false,
+    });
+
+    return res.status(200).json(exitemail);
+  } catch (error) {
+    return res.status(500).json({ message: `Login error: ${error}` });
+  }
+};
+
+// ---------------- Logout ----------------
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Logout successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: `Logout error: ${error}` });
+  }
+};

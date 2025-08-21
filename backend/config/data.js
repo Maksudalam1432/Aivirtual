@@ -1,10 +1,9 @@
 import mongoose from "mongoose"
 
-
  const connectdb= async ()=>{
      try {
      
-        await mongoose.connect(process.env.MONGO_UR)
+        await mongoose.connect("mongodb://localhost:27017/virtual")
 
         console.log("connect succesfully")
      }
