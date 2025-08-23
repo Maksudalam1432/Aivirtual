@@ -23,14 +23,14 @@ export const singup = async (req, res) => {
     const user = await Users.create({
       name,
       email,
-      password: hashpassword,
+      password: hashpassword,x
     });
 
     const token = await gentoken(user._id);
 
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+      maxAge: 2 * 24 * 60 * 60 * 1000, 
       sameSite: "strict",
       secure: false,
     });

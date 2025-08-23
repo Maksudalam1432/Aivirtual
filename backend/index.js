@@ -7,7 +7,7 @@ import AuthRoute from "./route/authroute.js"
  const app= express()
 
 dotenv.config()
- const PORT=process.env.PORT ||5000
+ const PORT=process.env.PORT ||4000
  app.use(express.json())
  app.use(cookieParser())
  app.use("/api/Auth",AuthRoute)
