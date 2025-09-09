@@ -18,5 +18,5 @@ function Usercontext({ children }) {
   );
 }
 
-export { userDataContext }; 
+export { userDataContext }
 export default Usercontext; 
