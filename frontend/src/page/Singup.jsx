@@ -3,7 +3,7 @@ import bg from "../assets/authBg.png";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import { userDataContext } from "../context/Usercontext";  // import sahi tarike se
+import { userDataContext } from "../context/Usercontext";  
 
 function Singup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +23,6 @@ function Singup() {
       );
       console.log(resultt.data);
 
-      // success ke baad navigate karna
       navigate("/Login");
 
     } catch (error) {
